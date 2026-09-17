@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Clientes</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/bootstrap.min.css}">
+
+</head>
+
+<body>
+
+<div class="container mt-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h1>Clientes</h1>
+
+        <a th:href="@{/clientes/novo}"
+           class="btn btn-primary">
+
+            Novo Cliente
+
+        </a>
+
+    </div>
+
+
+    <!-- Caso não existam clientes -->
+
+    <div class="alert alert-info"
+         th:if="${#lists.isEmpty(clientes)}">
+
+        Nenhum cliente cadastrado.
+
+    </div>
+
+
+    <!-- TABELA -->
+
+    <table class="table table-striped table-hover"
+           th:if="${!#lists.isEmpty(clientes)}">
+
+        <thead>
+
+        <tr>
+
+            <th>ID</th>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>CPF</th>
+            <th>Telefone</th>
+            <th>Cidade</th>
+            <th>UF</th>
+            <th>Ações</th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        <tr th:each="cliente : ${clientes}">
+
+            <td th:text="${cliente.id}"></td>
+
+            <td th:text="${cliente.nome}"></td>
+
+            <td th:text="${cliente.email}"></td>
+
+            <td th:text="${cliente.cpf}"></td>
+
+            <td th:text="${cliente.telefone}"></td>
+
+            <td th:text="${cliente.cidade}"></td>
+
+            <td th:text="${cliente.uf}"></td>
+
+
+            <td>
+
+                <a
+                        th:href="@{/clientes/{id}/editar(id=${cliente.id})}"
+                        class="btn btn-warning btn-sm">
+
+                    Editar
+
+                </a>
+
+
+                <a
+                        th:href="@{/clientes/{id}/excluir(id=${cliente.id})}"
+                        class="btn btn-danger btn-sm">
+
+                    Excluir
+
+                </a>
+
+            </td>
+
+        </tr>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+
+</body>
+</html>

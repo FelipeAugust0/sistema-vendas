@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Excluir Cliente</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/bootstrap.min.css}">
+
+</head>
+
+<body>
+
+<div class="container mt-5">
+
+    <div class="card">
+
+        <div class="card-header bg-danger text-white">
+
+            Excluir Cliente
+
+        </div>
+
+        <div class="card-body">
+
+            <h5>
+                Deseja realmente excluir este cliente?
+            </h5>
+
+            <p class="mt-3">
+
+                <strong>Nome:</strong>
+
+                <span th:text="${cliente.nome}"></span>
+
+            </p>
+
+
+            <p>
+
+                <strong>E-mail:</strong>
+
+                <span th:text="${cliente.email}"></span>
+
+            </p>
+
+
+            <p>
+
+                <strong>CPF:</strong>
+
+                <span th:text="${cliente.cpf}"></span>
+
+            </p>
+
+
+            <form
+                    th:action="@{/clientes/{id}/excluir(id=${cliente.id})}"
+                    method="post">
+
+                <button
+                        type="submit"
+                        class="btn btn-danger">
+
+                    Excluir
+
+                </button>
+
+
+                <a
+                        th:href="@{/clientes}"
+                        class="btn btn-secondary">
+
+                    Cancelar
+
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+
+</body>
+</html>

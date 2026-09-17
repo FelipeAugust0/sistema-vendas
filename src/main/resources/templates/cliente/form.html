@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cadastro de Cliente</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+
+<body>
+
+<div class="container mt-5">
+
+    <h1 class="mb-4"
+        th:text="${cliente.id == null ? 'Cadastrar Cliente' : 'Editar Cliente'}">
+        Cadastrar Cliente
+    </h1>
+
+    <!-- Mensagem geral de erro -->
+    <div class="alert alert-danger"
+         th:if="${erro}"
+         th:text="${erro}">
+    </div>
+
+    <form th:action="@{/clientes}"
+          th:object="${cliente}"
+          method="post">
+
+        <!-- ID usado durante edição -->
+        <input type="hidden" th:field="*{id}">
+
+        <!-- DADOS PESSOAIS -->
+        <h4 class="mb-3">Dados pessoais</h4>
+
+        <div class="mb-3">
+            <label for="nome" class="form-label">
+                Nome completo
+            </label>
+
+            <input
+                    type="text"
+                    id="nome"
+                    class="form-control"
+                    th:field="*{nome}"
+                    placeholder="Digite o nome completo">
+
+            <div class="text-danger"
+                 th:if="${#fields.hasErrors('nome')}"
+                 th:errors="*{nome}">
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-6 mb-3">
+
+                <label for="email" class="form-label">
+                    E-mail
+                </label>
+
+                <input
+                        type="email"
+                        id="email"
+                        class="form-control"
+                        th:field="*{email}"
+                        placeholder="exemplo@email.com">
+
+                <div class="text-danger"
+                     th:if="${#fields.hasErrors('email')}"
+                     th:errors="*{email}">
+                </div>
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <label for="cpf" class="form-label">
+                    CPF
+                </label>
+
+                <input
+                        type="text"
+                        id="cpf"
+                        class="form-control"
+                        th:field="*{cpf}"
+                        placeholder="000.000.000-00">
+
+                <div class="text-danger"
+                     th:if="${#fields.hasErrors('cpf')}"
+                     th:errors="*{cpf}">
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="mb-4">
+
+            <label for="telefone" class="form-label">
+                Telefone
+            </label>
+
+            <input
+                    type="text"
+                    id="telefone"
+                    class="form-control"
+                    th:field="*{telefone}"
+                    placeholder="(00) 00000-0000">
+
+            <div class="text-danger"
+                 th:if="${#fields.hasErrors('telefone')}"
+                 th:errors="*{telefone}">
+            </div>
+
+        </div>
+
+
+        <!-- ENDEREÇO -->
+
+        <h4 class="mb-3">Endereço</h4>
+
+        <div class="row">
+
+            <div class="col-md-8 mb-3">
+
+                <label for="logradouro" class="form-label">
+                    Logradouro
+                </label>
+
+                <input
+                        type="text"
+                        id="logradouro"
+                        class="form-control"
+                        th:field="*{logradouro}"
+                        placeholder="Rua, avenida...">
+
+                <div class="text-danger"
+                     th:if="${#fields.hasErrors('logradouro')}"
+                     th:errors="*{logradouro}">
+                </div>
+
+            </div>
+
+            <div class="col-md-4 mb-3">
+
+                <label for="numero" class="form-label">
+                    Número
+                </label>
+
+                <input
+                        type="text"
+                        id="numero"
+                        class="form-control"
+                        th:field="*{numero}"
+                        placeholder="Número">
+
+            </div>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label for="complemento" class="form-label">
+                Complemento
+            </label>
+
+            <input
+                    type="text"
+                    id="complemento"
+                    class="form-control"
+                    th:field="*{complemento}"
+                    placeholder="Apartamento, bloco, casa...">
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-6 mb-3">
+
+                <label for="bairro" class="form-label">
+                    Bairro
+                </label>
+
+                <input
+                        type="text"
+                        id="bairro"
+                        class="form-control"
+                        th:field="*{bairro}">
+
+                <div class="text-danger"
+                     th:if="${#fields.hasErrors('bairro')}"
+                     th:errors="*{bairro}">
+                </div>
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <label for="cidade" class="form-label">
+                    Cidade
+                </label>
+
+                <input
+                        type="text"
+                        id="cidade"
+                        class="form-control"
+                        th:field="*{cidade}">
+
+                <div class="text-danger"
+                     th:if="${#fields.hasErrors('cidade')}"
+                     th:errors="*{cidade}">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="row">
+
+            <div class="col-md-4 mb-3">
+
+                <label for="uf" class="form-label">
+                    UF
+                </label>
+
+                <select
+                        id="uf"
+                        class="form-select"
+                        th:field="*{uf}">
+
+                    <option value="">Selecione</option>
+
+                    <option value="AC">AC</option>
+                    <option value="AL">AL</option>
+                    <option value="AP">AP</option>
+                    <option value="AM">AM</option>
+                    <option value="BA">BA</option>
+                    <option value="CE">CE</option>
+                    <option value="DF">DF</option>
+                    <option value="ES">ES</option>
+                    <option value="GO">GO</option>
+                    <option value="MA">MA</option>
+                    <option value="MT">MT</option>
+                    <option value="MS">MS</option>
+                    <option value="MG">MG</option>
+                    <option value="PA">PA</option>
+                    <option value="PB">PB</option>
+                    <option value="PR">PR</option>
+                    <option value="PE">PE</option>
+                    <option value="PI">PI</option>
+                    <option value="RJ">RJ</option>
+                    <option value="RN">RN</option>
+                    <option value="RS">RS</option>
+                    <option value="RO">RO</option>
+                    <option value="RR">RR</option>
+                    <option value="SC">SC</option>
+                    <option value="SP">SP</option>
+                    <option value="SE">SE</option>
+                    <option value="TO">TO</option>
+
+                </select>
+
+                <div class="text-danger"
+                     th:if="${#fields.hasErrors('uf')}"
+                     th:errors="*{uf}">
+                </div>
+
+            </div>
+
+
+            <div class="col-md-8 mb-3">
+
+                <label for="cep" class="form-label">
+                    CEP
+                </label>
+
+                <input
+                        type="text"
+                        id="cep"
+                        class="form-control"
+                        th:field="*{cep}"
+                        placeholder="00000-000">
+
+                <div class="text-danger"
+                     th:if="${#fields.hasErrors('cep')}"
+                     th:errors="*{cep}">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- BOTÕES -->
+
+        <div class="mt-4">
+
+            <button type="submit"
+                    class="btn btn-primary">
+                Salvar
+            </button>
+
+            <a th:href="@{/clientes}"
+               class="btn btn-secondary">
+                Cancelar
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+
+</body>
+</html>
