@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "clientes")
@@ -28,7 +30,7 @@ public class Cliente {
     @CPF(message = "CPF inválido")
     @Column(nullable = false, unique = true)
     private String cpf;
-    
+
     @NotBlank(message = "O telefone é obrigatório")
     private String telefone;
 
@@ -52,6 +54,9 @@ public class Cliente {
     @NotBlank(message = "O CEP é obrigatório")
     @Pattern(regexp = "\\d{5}-?\\d{3}", message = "Informe um CEP válido")
     private String cep;
+
+    @OneToMany(mappedBy = "cliente")
+    private List<Pedido> pedidos = new ArrayList<>();
 
     public Cliente() {
     }
@@ -151,4 +156,13 @@ public class Cliente {
     public void setCep(String cep) {
         this.cep = cep;
     }
+
+    public List<Pedido> getPedidos() {
+        return pedidos;
+    }
+
+    public void setPedidos(List<Pedido> pedidos) {
+        this.pedidos = pedidos;
+    }
+
 }
