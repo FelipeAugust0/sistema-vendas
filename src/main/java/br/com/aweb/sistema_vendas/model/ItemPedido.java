@@ -51,4 +51,10 @@ public class ItemPedido {
         this.quantidade = quantidade;
         this.precoUnitario = produto.getPreco();
     }
+
+    public BigDecimal getSubtotal() {
+    return precoUnitario.multiply(
+        BigDecimal.valueOf(quantidade)
+    );
+}
 }

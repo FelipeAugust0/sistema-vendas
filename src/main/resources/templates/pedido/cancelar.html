@@ -3,9 +3,7 @@
       xmlns:th="http://www.thymeleaf.org">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
@@ -13,7 +11,6 @@
 
     <link rel="stylesheet"
           th:href="@{/css/bootstrap.min.css}">
-
 </head>
 
 <body>
@@ -23,25 +20,50 @@
     <div class="card">
 
         <div class="card-header bg-danger text-white">
-
             Cancelar Pedido
-
         </div>
 
         <div class="card-body">
 
-            <h5>
-                Deseja realmente cancelar este pedido?
-            </h5>
+            <h5>Deseja realmente cancelar este pedido?</h5>
 
             <p class="mt-3">
-
                 <strong>Pedido:</strong>
-
                 <span th:text="${pedido.id}"></span>
-
             </p>
 
             <p>
-
                 <strong>Cliente:</strong>
+                <span th:text="${pedido.cliente.nome}"></span>
+            </p>
+
+            <p>
+                <strong>Valor:</strong>
+                R$ <span th:text="${pedido.valorTotal}"></span>
+            </p>
+
+            <form th:action="@{/pedidos/cancelar/{id}(id=${pedido.id})}"
+                  method="post">
+
+                <button type="submit"
+                        class="btn btn-danger">
+                    Confirmar Cancelamento
+                </button>
+
+                <a th:href="@{/pedidos}"
+                   class="btn btn-secondary">
+                    Voltar
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+
+</body>
+</html>

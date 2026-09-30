@@ -220,7 +220,7 @@ public class PedidoController {
 
             return "redirect:/pedidos";
 
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | IllegalStateException e) {
 
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,

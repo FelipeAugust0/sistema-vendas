@@ -90,9 +90,7 @@
 
             <td th:text="${'R$ ' + item.precoUnitario}"></td>
 
-            <td th:text="${'R$ ' + item.precoUnitario.multiply(
-                T(java.math.BigDecimal).valueOf(item.quantidade)
-            )}">
+            <td th:text="${'R$ ' + item.subtotal}"></td>
             </td>
 
         </tr>
