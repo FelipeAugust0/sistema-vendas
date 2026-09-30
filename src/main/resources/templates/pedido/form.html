@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Novo Pedido</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/bootstrap.min.css}">
+
+</head>
+
+<body>
+
+<div class="container mt-5">
+
+    <h1 class="mb-4">
+        Novo Pedido
+    </h1>
+
+    <form th:action="@{/pedidos/novo}"
+          method="post">
+
+        <div class="mb-3">
+
+            <label for="clienteId"
+                   class="form-label">
+                Cliente
+            </label>
+
+            <select id="clienteId"
+                    name="clienteId"
+                    class="form-select"
+                    required>
+
+                <option value="">
+                    Selecione um cliente
+                </option>
+
+                <option th:each="cliente : ${clientes}"
+                        th:value="${cliente.id}"
+                        th:text="${cliente.nome}">
+                </option>
+
+            </select>
+
+        </div>
+
+        <button type="submit"
+                class="btn btn-primary">
+            Criar Pedido
+        </button>
+
+        <a th:href="@{/pedidos}"
+           class="btn btn-secondary">
+            Cancelar
+        </a>
+
+    </form>
+
+</div>
+
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+
+</body>
+</html>

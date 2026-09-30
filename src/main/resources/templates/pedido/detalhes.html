@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Detalhes do Pedido</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/bootstrap.min.css}">
+
+</head>
+
+<body>
+
+<div class="container mt-5">
+
+    <h1 class="mb-4">
+        Detalhes do Pedido
+    </h1>
+
+
+    <div class="card mb-4">
+
+        <div class="card-body">
+
+            <p>
+                <strong>ID:</strong>
+                <span th:text="${pedido.id}"></span>
+            </p>
+
+            <p>
+                <strong>Cliente:</strong>
+                <span th:text="${pedido.cliente.nome}"></span>
+            </p>
+
+            <p>
+                <strong>Data:</strong>
+
+                <span th:text="${#temporals.format(
+                    pedido.dataPedido,
+                    'dd/MM/yyyy HH:mm'
+                )}">
+                </span>
+
+            </p>
+
+            <p>
+                <strong>Status:</strong>
+                <span th:text="${pedido.status}"></span>
+            </p>
+
+            <p>
+                <strong>Versão:</strong>
+                <span th:text="${pedido.version}"></span>
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <h4>Itens</h4>
+
+    <table class="table table-striped">
+
+        <thead>
+
+        <tr>
+            <th>Produto</th>
+            <th>Quantidade</th>
+            <th>Preço</th>
+            <th>Subtotal</th>
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        <tr th:each="item : ${pedido.itens}">
+
+            <td th:text="${item.produto.nome}"></td>
+
+            <td th:text="${item.quantidade}"></td>
+
+            <td th:text="${'R$ ' + item.precoUnitario}"></td>
+
+            <td th:text="${'R$ ' + item.precoUnitario.multiply(
+                T(java.math.BigDecimal).valueOf(item.quantidade)
+            )}">
+            </td>
+
+        </tr>
+
+        </tbody>
+
+    </table>
+
+
+    <h4 class="text-end">
+
+        Total:
+        R$
+        <span th:text="${pedido.valorTotal}"></span>
+
+    </h4>
+
+
+    <a th:href="@{/pedidos}"
+       class="btn btn-secondary mt-3">
+
+        Voltar
+
+    </a>
+
+</div>
+
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+
+</body>
+</html>

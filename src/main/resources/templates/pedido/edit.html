@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Editar Pedido</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/bootstrap.min.css}">
+
+</head>
+
+<body>
+
+<div class="container mt-5">
+
+    <h1 class="mb-4">
+        Editar Pedido
+    </h1>
+
+    <div class="card mb-4">
+
+        <div class="card-body">
+
+            <p>
+                <strong>Pedido:</strong>
+                <span th:text="${pedido.id}"></span>
+            </p>
+
+            <p>
+                <strong>Cliente:</strong>
+                <span th:text="${pedido.cliente.nome}"></span>
+            </p>
+
+            <p>
+                <strong>Status:</strong>
+                <span th:text="${pedido.status}"></span>
+            </p>
+
+            <p>
+                <strong>Total:</strong>
+                R$
+                <span th:text="${pedido.valorTotal}"></span>
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <h4>Adicionar Produto</h4>
+
+    <form th:action="@{/pedidos/{id}/adicionar-item(id=${pedido.id})}"
+          method="post"
+          class="row g-3 mb-4">
+
+        <div class="col-md-6">
+
+            <label class="form-label">
+                Produto
+            </label>
+
+            <select name="produtoId"
+                    class="form-select"
+                    required>
+
+                <option value="">
+                    Selecione
+                </option>
+
+                <option th:each="produto : ${produtos}"
+                        th:value="${produto.id}"
+                        th:text="${produto.nome + ' - Estoque: ' + produto.quantidadeEmEstoque}">
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <label class="form-label">
+                Quantidade
+            </label>
+
+            <input type="number"
+                   name="quantidade"
+                   class="form-control"
+                   min="1"
+                   required>
+
+        </div>
+
+
+        <div class="col-md-3 d-flex align-items-end">
+
+            <button type="submit"
+                    class="btn btn-primary">
+                Adicionar
+            </button>
+
+        </div>
+
+    </form>
+
+
+    <h4>Itens do Pedido</h4>
+
+    <div class="alert alert-info"
+         th:if="${#lists.isEmpty(pedido.itens)}">
+
+        Nenhum produto adicionado.
+
+    </div>
+
+
+    <table class="table table-striped"
+           th:if="${!#lists.isEmpty(pedido.itens)}">
+
+        <thead>
+
+        <tr>
+            <th>Produto</th>
+            <th>Quantidade</th>
+            <th>Preço Unitário</th>
+            <th>Subtotal</th>
+            <th>Ação</th>
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        <tr th:each="item : ${pedido.itens}">
+
+            <td th:text="${item.produto.nome}"></td>
+
+            <td th:text="${item.quantidade}"></td>
+
+            <td th:text="${'R$ ' + item.precoUnitario}"></td>
+
+            <td th:text="${'R$ ' + item.precoUnitario.multiply(
+                T(java.math.BigDecimal).valueOf(item.quantidade)
+            )}">
+            </td>
+
+            <td>
+
+                <form th:action="@{/pedidos/{pedidoId}/remover-item/{itemId}
+                      (pedidoId=${pedido.id}, itemId=${item.id})}"
+                      method="post">
+
+                    <button type="submit"
+                            class="btn btn-danger btn-sm">
+                        Remover
+                    </button>
+
+                </form>
+
+            </td>
+
+        </tr>
+
+        </tbody>
+
+    </table>
+
+
+    <div class="mt-4">
+
+        <a th:href="@{/pedidos}"
+           class="btn btn-secondary">
+            Voltar
+        </a>
+
+        <a th:href="@{/pedidos/cancelar/{id}(id=${pedido.id})}"
+           class="btn btn-danger">
+            Cancelar Pedido
+        </a>
+
+    </div>
+
+</div>
+
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+
+</body>
+</html>
