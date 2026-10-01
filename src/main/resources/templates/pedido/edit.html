@@ -20,6 +20,8 @@
 
 <div class="container mt-5">
 
+    <div class="alert alert-danger" th:if="${erro}" th:text="${erro}"></div>
+
     <h1 class="mb-4">
         Editar Pedido
     </h1>
@@ -146,15 +148,12 @@
 
             <td th:text="${'R$ ' + item.precoUnitario}"></td>
 
-            <td th:text="${'R$ ' + item.precoUnitario.multiply(
-                T(java.math.BigDecimal).valueOf(item.quantidade)
-            )}">
+            <td th:text="${'R$ ' + item.subtotal}">
             </td>
 
             <td>
 
-                <form th:action="@{/pedidos/{pedidoId}/remover-item/{itemId}
-                      (pedidoId=${pedido.id}, itemId=${item.id})}"
+                <form th:action="@{/pedidos/{pedidoId}/remover-item/{itemId}(pedidoId=${pedido.id}, itemId=${item.id})}"
                       method="post">
 
                     <button type="submit"
@@ -174,6 +173,11 @@
 
 
     <div class="mt-4">
+
+        <form th:action="@{/pedidos/{id}/finalizar(id=${pedido.id})}"
+              method="post" class="d-inline">
+            <button type="submit" class="btn btn-success">Finalizar Pedido</button>
+        </form>
 
         <a th:href="@{/pedidos}"
            class="btn btn-secondary">

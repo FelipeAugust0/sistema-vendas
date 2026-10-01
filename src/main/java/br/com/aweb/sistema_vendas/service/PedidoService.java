@@ -197,15 +197,7 @@ public class PedidoService {
 
         for (ItemPedido item : pedido.getItens()) {
 
-            BigDecimal subtotal =
-                    item.getPrecoUnitario()
-                    .multiply(
-                        BigDecimal.valueOf(
-                            item.getQuantidade()
-                        )
-                    );
-
-            total = total.add(subtotal);
+            total = total.add(item.getSubtotal());
         }
 
         pedido.setValorTotal(total);

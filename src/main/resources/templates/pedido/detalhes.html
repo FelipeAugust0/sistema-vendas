@@ -20,6 +20,8 @@
 
 <div class="container mt-5">
 
+    <div class="alert alert-danger" th:if="${erro}" th:text="${erro}"></div>
+
     <h1 class="mb-4">
         Detalhes do Pedido
     </h1>
@@ -91,7 +93,6 @@
             <td th:text="${'R$ ' + item.precoUnitario}"></td>
 
             <td th:text="${'R$ ' + item.subtotal}"></td>
-            </td>
 
         </tr>
 

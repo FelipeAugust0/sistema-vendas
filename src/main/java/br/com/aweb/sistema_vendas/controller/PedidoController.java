@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.com.aweb.sistema_vendas.model.Cliente;
 import br.com.aweb.sistema_vendas.model.Pedido;
@@ -129,7 +130,8 @@ public class PedidoController {
     public String adicionarItem(
             @PathVariable Long pedidoId,
             @RequestParam Long produtoId,
-            @RequestParam Integer quantidade) {
+            @RequestParam Integer quantidade,
+            RedirectAttributes redirectAttributes) {
 
         try {
 
@@ -144,10 +146,14 @@ public class PedidoController {
         } catch (IllegalArgumentException |
                  IllegalStateException e) {
 
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    e.getMessage()
-            );
+            redirectAttributes.addFlashAttribute("erro", e.getMessage());
+
+            boolean pedidoAtivo = pedidoService.buscarPorId(pedidoId)
+                    .filter(pedido -> pedido.getStatus() == StatusPedido.ATIVO)
+                    .isPresent();
+
+            return pedidoAtivo ? "redirect:/pedidos/edit/" + pedidoId
+                    : "redirect:/pedidos";
         }
     }
 
@@ -155,7 +161,8 @@ public class PedidoController {
     @PostMapping("/{pedidoId}/remover-item/{itemId}")
     public String removerItem(
             @PathVariable Long pedidoId,
-            @PathVariable Long itemId) {
+            @PathVariable Long itemId,
+            RedirectAttributes redirectAttributes) {
 
         try {
 
@@ -169,10 +176,14 @@ public class PedidoController {
         } catch (IllegalArgumentException |
                  IllegalStateException e) {
 
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    e.getMessage()
-            );
+            redirectAttributes.addFlashAttribute("erro", e.getMessage());
+
+            boolean pedidoAtivo = pedidoService.buscarPorId(pedidoId)
+                    .filter(pedido -> pedido.getStatus() == StatusPedido.ATIVO)
+                    .isPresent();
+
+            return pedidoAtivo ? "redirect:/pedidos/edit/" + pedidoId
+                    : "redirect:/pedidos";
         }
     }
 
@@ -200,6 +211,13 @@ public class PedidoController {
             );
         }
 
+        if (optionalPedido.get().getStatus() == StatusPedido.CANCELADO) {
+            return new ModelAndView("pedido/detalhes", Map.of(
+                    "pedido", optionalPedido.get(),
+                    "erro", "Pedido já está cancelado"
+            ));
+        }
+
         return new ModelAndView(
                 "pedido/cancelar",
                 Map.of(
@@ -212,7 +230,8 @@ public class PedidoController {
     // CANCELAR PEDIDO
     @PostMapping("/cancelar/{id}")
     public String cancelarPedido(
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
 
         try {
 
@@ -222,10 +241,8 @@ public class PedidoController {
 
         } catch (IllegalArgumentException | IllegalStateException e) {
 
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    e.getMessage()
-            );
+            redirectAttributes.addFlashAttribute("erro", e.getMessage());
+            return "redirect:/pedidos";
         }
     }
 

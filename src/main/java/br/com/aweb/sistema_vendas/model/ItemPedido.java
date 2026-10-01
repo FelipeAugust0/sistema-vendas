@@ -15,6 +15,8 @@ import jakarta.validation.constraints.Positive;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -31,6 +33,8 @@ public class ItemPedido {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "pedido_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Pedido pedido;
 
     @NotNull
@@ -53,8 +57,8 @@ public class ItemPedido {
     }
 
     public BigDecimal getSubtotal() {
-    return precoUnitario.multiply(
-        BigDecimal.valueOf(quantidade)
-    );
-}
+        return precoUnitario.multiply(
+                BigDecimal.valueOf(quantidade)
+        );
+    }
 }

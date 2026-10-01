@@ -54,6 +54,7 @@ public class Pedido {
     @Column(nullable = false, length = 10)
     private StatusPedido status = StatusPedido.ATIVO;
 
+    // cascade propaga operações aos itens; orphanRemoval exclui itens removidos da lista.
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemPedido> itens = new ArrayList<>();
 
