@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
 
@@ -18,6 +19,12 @@
 <body>
 
 <div class="container mt-5">
+
+    <nav class="d-flex gap-2 justify-content-end mb-3" sec:authorize="hasRole('ADMIN')">
+        <a th:href="@{/pedidos}" class="btn btn-outline-primary btn-sm">Pedidos</a>
+        <a th:href="@{/produtos}" class="btn btn-outline-primary btn-sm">Produtos</a>
+        <a th:href="@{/logout}" class="btn btn-outline-secondary btn-sm">Sair</a>
+    </nav>
 
     <div class="d-flex justify-content-between align-items-center mb-4">
 

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8">
@@ -16,6 +17,13 @@
 <body>
 
 <div class="container mt-5">
+
+    <nav class="d-flex gap-2 justify-content-end mb-3">
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/produtos}" class="btn btn-outline-primary btn-sm">Produtos</a>
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/clientes}" class="btn btn-outline-primary btn-sm">Clientes</a>
+        <span class="align-self-center" sec:authentication="name"></span>
+        <a th:href="@{/logout}" class="btn btn-outline-secondary btn-sm">Sair</a>
+    </nav>
 
     <div class="alert alert-danger" th:if="${erro}" th:text="${erro}"></div>
 

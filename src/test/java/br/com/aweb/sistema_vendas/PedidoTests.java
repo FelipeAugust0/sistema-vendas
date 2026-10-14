@@ -5,9 +5,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.math.BigDecimal;
 import java.net.CookieManager;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +24,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import br.com.aweb.sistema_vendas.model.*;
 import br.com.aweb.sistema_vendas.repository.*;
 import br.com.aweb.sistema_vendas.service.PedidoService;
+import br.com.aweb.sistema_vendas.service.UsuarioService;
 import jakarta.persistence.EntityManager;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -29,6 +34,8 @@ class PedidoTests {
     @Autowired PedidoRepository pedidoRepository;
     @Autowired ProdutoRepository produtoRepository;
     @Autowired ClienteRepository clienteRepository;
+    @Autowired UsuarioRepository usuarioRepository;
+    @Autowired UsuarioService usuarioService;
     @Autowired PlatformTransactionManager transactionManager;
     @Autowired EntityManager entityManager;
     @LocalServerPort int port;
@@ -37,12 +44,14 @@ class PedidoTests {
     private Produto produto;
     private Pedido pedido;
     private HttpClient http;
+    private String csrfToken;
 
     @BeforeEach
     void preparar() {
         pedidoRepository.deleteAll();
         produtoRepository.deleteAll();
         clienteRepository.deleteAll();
+        usuarioRepository.deleteAll();
 
         cliente = new Cliente();
         cliente.setNome("Cliente Teste");
@@ -63,7 +72,20 @@ class PedidoTests {
         produto.setQuantidadeEmEstoque(10);
         produto = produtoRepository.save(produto);
         pedido = pedidoService.criarPedido(cliente);
-        http = HttpClient.newBuilder().cookieHandler(new CookieManager()).build();
+        Usuario admin = new Usuario();
+        admin.setNome("Administrador Teste");
+        admin.setEmail("admin@example.com");
+        admin.setSenha("senha-teste");
+        admin.setRole(UsuarioRole.ADMIN);
+        usuarioService.salvar(admin);
+
+        try {
+            LoginSession sessao = login("admin@example.com", "senha-teste");
+            http = sessao.http();
+            csrfToken = sessao.csrfToken();
+        } catch (Exception e) {
+            throw new IllegalStateException("Não foi possível autenticar o usuário de teste", e);
+        }
     }
 
     @Test
@@ -201,6 +223,34 @@ class PedidoTests {
         assertEquals(404, get("/pedidos/cancelar/" + Long.MAX_VALUE).statusCode());
     }
 
+    @Test
+    void usuarioPadraoAcessaPedidosMasNaoCadastrosAdministrativos() throws Exception {
+        Usuario padrao = new Usuario();
+        padrao.setNome("Usuário Padrão");
+        padrao.setEmail("padrao@example.com");
+        padrao.setSenha("senha-padrao");
+        padrao.setRole(UsuarioRole.PADRAO);
+        usuarioService.salvar(padrao);
+
+        LoginSession sessao = login("padrao@example.com", "senha-padrao");
+        assertEquals(200, get(sessao.http(), "/pedidos").statusCode());
+        assertEquals(403, get(sessao.http(), "/produtos").statusCode());
+        assertEquals(403, get(sessao.http(), "/clientes").statusCode());
+    }
+
+    @Test
+    void loginIgnoraCaixaSenhaEhCriptografadaELogoutRedireciona() throws Exception {
+        Usuario admin = (Usuario) usuarioService.loadUserByUsername("ADMIN@EXAMPLE.COM");
+        assertNotEquals("senha-teste", admin.getPassword());
+        assertTrue(admin.getPassword().startsWith("$2"));
+
+        assertEquals(200, get("/logout").statusCode());
+        HttpResponse<String> logout = post("/logout", "");
+        assertEquals(302, logout.statusCode());
+        assertTrue(logout.headers().firstValue("location").orElse("").contains("/login?logout"));
+        assertEquals(302, get("/pedidos").statusCode());
+    }
+
     private Pedido buscarPedido() {
         return pedidoService.buscarPorId(pedido.getId()).orElseThrow();
     }
@@ -215,14 +265,48 @@ class PedidoTests {
     }
 
     private HttpResponse<String> get(String path) throws Exception {
-        return http.send(HttpRequest.newBuilder(URI.create("http://localhost:" + port + path))
+        return get(http, path);
+    }
+
+    private HttpResponse<String> get(HttpClient client, String path) throws Exception {
+        return client.send(HttpRequest.newBuilder(URI.create("http://localhost:" + port + path))
                 .GET().build(), HttpResponse.BodyHandlers.ofString());
     }
 
     private HttpResponse<String> post(String path, String body) throws Exception {
+        String csrf = "_csrf=" + URLEncoder.encode(csrfToken, StandardCharsets.UTF_8);
+        String bodyComCsrf = body.isBlank() ? csrf : body + "&" + csrf;
         return http.send(HttpRequest.newBuilder(URI.create("http://localhost:" + port + path))
                 .header("Content-Type", "application/x-www-form-urlencoded")
-                .POST(HttpRequest.BodyPublishers.ofString(body)).build(),
+                .POST(HttpRequest.BodyPublishers.ofString(bodyComCsrf)).build(),
                 HttpResponse.BodyHandlers.ofString());
+    }
+
+    private LoginSession login(String email, String senha) throws Exception {
+        HttpClient client = HttpClient.newBuilder().cookieHandler(new CookieManager()).build();
+        HttpResponse<String> paginaLogin = get(client, "/login");
+        Matcher matcher = Pattern.compile("name=\"_csrf\"[^>]*value=\"([^\"]+)\"")
+                .matcher(paginaLogin.body());
+        assertTrue(matcher.find(), "Token CSRF não encontrado no formulário de login");
+        String token = matcher.group(1);
+        String corpo = "email=" + URLEncoder.encode(email, StandardCharsets.UTF_8)
+                + "&password=" + URLEncoder.encode(senha, StandardCharsets.UTF_8)
+                + "&_csrf=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
+        HttpResponse<String> resposta = client.send(
+                HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/login"))
+                        .header("Content-Type", "application/x-www-form-urlencoded")
+                        .POST(HttpRequest.BodyPublishers.ofString(corpo))
+                        .build(),
+                HttpResponse.BodyHandlers.ofString());
+        assertEquals(302, resposta.statusCode());
+        assertTrue(resposta.headers().firstValue("location").orElse("").contains("/pedidos"));
+        HttpResponse<String> paginaLogout = get(client, "/logout");
+        Matcher tokenAutenticado = Pattern.compile("name=\"_csrf\"[^>]*value=\"([^\"]+)\"")
+                .matcher(paginaLogout.body());
+        assertTrue(tokenAutenticado.find(), "Token CSRF autenticado não encontrado");
+        return new LoginSession(client, tokenAutenticado.group(1));
+    }
+
+    private record LoginSession(HttpClient http, String csrfToken) {
     }
 }

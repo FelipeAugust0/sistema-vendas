@@ -63,7 +63,7 @@ diretório raiz do repositório e Dockerfile Path `./Dockerfile`.
 Deixe Docker Command vazio para usar o `ENTRYPOINT` da imagem.
 Configure o Health Check Path como `/pedidos`.
 
-Crie um banco Render Postgres na mesma região e configure no Web Service:
+Crie o banco Render Postgres e o Web Service na mesma região e configure no Web Service:
 
 | Variável | Valor |
 | --- | --- |

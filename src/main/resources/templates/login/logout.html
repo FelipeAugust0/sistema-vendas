@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sair</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+<div class="container mt-5" style="max-width: 560px;">
+    <div class="card">
+        <div class="card-body">
+            <h1 class="h4">Encerrar sessão</h1>
+            <p>Deseja realmente sair do sistema?</p>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-danger">Sair</button>
+                <a th:href="@{/pedidos}" class="btn btn-secondary">Voltar</a>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
