@@ -63,13 +63,17 @@ diretório raiz do repositório e Dockerfile Path `./Dockerfile`.
 Deixe Docker Command vazio para usar o `ENTRYPOINT` da imagem.
 Configure o Health Check Path como `/pedidos`.
 
-Crie um banco Render Postgres na mesma região e configure no Web Service:
+Crie o banco Render Postgres e o Web Service na mesma região e configure no Web Service:
 
 | Variável | Valor |
 | --- | --- |
 | `DB_URL` | `jdbc:postgresql://HOST_INTERNO:5432/NOME_DO_BANCO` |
 | `DB_USER` | Usuário do banco Render Postgres |
 | `DB_PASSWORD` | Senha do banco Render Postgres |
+| `ADMIN_EMAIL` | E-mail do usuário de teste ADMIN |
+| `ADMIN_PASSWORD` | Senha forte do usuário de teste ADMIN |
+| `PADRAO_EMAIL` | E-mail do usuário de teste PADRAO |
+| `PADRAO_PASSWORD` | Senha forte do usuário de teste PADRAO |
 
 Use o host, usuário e nome do banco informados no painel do Render.
 `DB_URL` precisa estar no formato JDBC acima; não cole diretamente uma URL
@@ -77,3 +81,7 @@ Use o host, usuário e nome do banco informados no painel do Render.
 O Render fornece `PORT` e a aplicação já a utiliza em `server.port`.
 O `docker-compose.yml` inicia somente o banco local; ele não é utilizado nesse deploy.
 Mantenha as credenciais nas variáveis do serviço, fora do repositório.
+Na primeira inicialização, a aplicação cria os dois usuários configurados acima
+com senha BCrypt. Inicializações posteriores preservam os usuários existentes.
+Não publique essas senhas no repositório ou no pull request; entregue-as apenas
+pelo canal definido para a avaliação.
