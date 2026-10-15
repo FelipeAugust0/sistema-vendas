@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:unless="${produto.id == null}">Edição de Produto</title>
     <title th:if="${produto.id == null}">Cadastro de Produto</title>
 
@@ -18,20 +19,20 @@
         </div>
 
         <div class="mb-3">
-            <label for="descricao" class="form-label">Descricao</label>
+            <label for="descricao" class="form-label">Descrição</label>
             <input type="text" class="form-control" id="descricao" th:field="*{descricao}">
             <div class="text-danger" th:if="${#fields.hasErrors('descricao')}" th:errors="*{descricao}"></div>
         </div>
 
         <div class="mb-3">
             <label for="preco" class="form-label">Preço</label>
-            <input type="number" class="form-control" id="preco" th:field="*{preco}">
+            <input type="number" class="form-control" id="preco" th:field="*{preco}" min="0.01" step="0.01" required>
             <div class="text-danger" th:if="${#fields.hasErrors('preco')}" th:errors="*{preco}"></div>
         </div>
 
         <div class="mb-3">
             <label for="quantidadeEmEstoque" class="form-label">Quantidade em Estoque</label>
-            <input type="number" class="form-control" id="quantidadeEmEstoque" th:field="*{quantidadeEmEstoque}">
+            <input type="number" class="form-control" id="quantidadeEmEstoque" th:field="*{quantidadeEmEstoque}" min="0" step="1" required>
             <div class="text-danger" th:if="${#fields.hasErrors('quantidadeEmEstoque')}" th:errors="*{quantidadeEmEstoque}"></div>
         </div>        
 

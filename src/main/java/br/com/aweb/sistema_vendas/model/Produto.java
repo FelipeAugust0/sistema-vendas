@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -37,12 +38,17 @@ public class Produto {
 
     @NotNull(message = "Preço é obrigatório.")
     @Positive(message = "O valor deve ser maior que zero.")
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal preco;
 
     @NotNull(message = "Quantidade é obrigatório.")
     @PositiveOrZero(message = "O valor deve ser maior ou igual a zero.")
+    @Column(nullable = false)
     private Integer quantidadeEmEstoque;
+
+    @Version
+    @Column(columnDefinition = "bigint default 0")
+    private Long version;
 
     public BigDecimal getPreco() {
         return preco;

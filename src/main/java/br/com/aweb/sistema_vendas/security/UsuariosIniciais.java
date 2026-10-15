@@ -45,13 +45,14 @@ public class UsuariosIniciais implements CommandLineRunner {
             String email,
             String senha,
             UsuarioRole role) {
+        email = email.trim();
         if (email.isBlank() || senha.isBlank() || usuarioRepository.findByEmailIgnoreCase(email).isPresent()) {
             return;
         }
 
         Usuario usuario = new Usuario();
         usuario.setNome(nome);
-        usuario.setEmail(email.trim());
+        usuario.setEmail(email);
         usuario.setSenha(senha);
         usuario.setRole(role);
         usuarioService.salvar(usuario);

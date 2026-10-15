@@ -4,7 +4,8 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Listagem de Clientes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos</title>
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
 </head>
 <body>
@@ -14,10 +15,13 @@
         <a th:href="@{/clientes}" class="btn btn-outline-primary btn-sm">Clientes</a>
         <a th:href="@{/logout}" class="btn btn-outline-secondary btn-sm">Sair</a>
     </nav>
+    <div class="alert alert-danger" th:if="${erro}" th:text="${erro}"></div>
     <h1>Produtos</h1>
     <a class="btn btn-primary mb-3" th:href="@{/produtos/novo}">Novo Produto</a>
 
-    <table class="table table-bordered table-striped">
+    <div class="alert alert-info" th:if="${#lists.isEmpty(produtos)}">Nenhum produto cadastrado.</div>
+
+    <table class="table table-bordered table-striped" th:if="${!#lists.isEmpty(produtos)}">
         <thead class="thead-dark">
         <tr>
             <th>Nome</th>

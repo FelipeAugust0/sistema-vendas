@@ -2,7 +2,7 @@ package br.com.aweb.sistema_vendas.controller;
 
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.com.aweb.sistema_vendas.model.Produto;
 import br.com.aweb.sistema_vendas.service.ProdutoService;
@@ -21,8 +22,11 @@ import jakarta.validation.Valid;
 @RequestMapping("/produtos")
 public class ProdutoController {
 
-    @Autowired
-    private ProdutoService produtoService;
+    private final ProdutoService produtoService;
+
+    public ProdutoController(ProdutoService produtoService) {
+        this.produtoService = produtoService;
+    }
 
     // Listar produtos
     @GetMapping
@@ -58,13 +62,23 @@ public class ProdutoController {
 
     // Atualizar produto
     @PostMapping("/edit/{id}")
-    public String edit(@Valid Produto produto, BindingResult result) {
+    public String edit(
+            @PathVariable Long id,
+            @Valid Produto produto,
+            BindingResult result) {
+
+        if (produtoService.buscarPorId(id).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        // O ID da URL determina qual produto será alterado.
+        produto.setId(id);
+
         if (result.hasErrors()) {
             return "produto/form";
         }
 
-        produtoService.atualizar(produto.getId(), produto);
-
+        produtoService.atualizar(id, produto);
         return "redirect:/produtos";
     }
 
@@ -79,8 +93,22 @@ public class ProdutoController {
     }
 
     @PostMapping("/delete/{id}")
-    public String delete(Produto produto) {
-        produtoService.excluir(produto.getId());
+    public String delete(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
+
+        if (produtoService.buscarPorId(id).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        try {
+            produtoService.excluir(id);
+        } catch (DataIntegrityViolationException e) {
+            redirectAttributes.addFlashAttribute(
+                    "erro",
+                    "Não é possível excluir este produto porque ele está vinculado a pedidos.");
+        }
+
         return "redirect:/produtos";
     }
 

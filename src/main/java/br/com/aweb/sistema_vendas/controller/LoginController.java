@@ -12,12 +12,12 @@ public class LoginController {
     }
 
     @GetMapping("/login")
-    public String login() {
+    public String exibirLogin() {
         return "login";
     }
 
     @GetMapping("/logout")
-    public String logout() {
+    public String exibirLogout() {
         return "logout";
     }
 }

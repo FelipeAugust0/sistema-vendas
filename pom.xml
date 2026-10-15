@@ -13,20 +13,7 @@
 	<artifactId>sistema-vendas</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>sistema-vendas</name>
-	<description>Demo project for Spring Boot</description>
-	<url />
-	<licenses>
-		<license />
-	</licenses>
-	<developers>
-		<developer />
-	</developers>
-	<scm>
-		<connection />
-		<developerConnection />
-		<tag />
-		<url />
-	</scm>
+	<description>Sistema de vendas com produtos, clientes, pedidos e controle de acesso</description>
 	<properties>
 		<java.version>21</java.version>
 	</properties>
@@ -73,11 +60,6 @@
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

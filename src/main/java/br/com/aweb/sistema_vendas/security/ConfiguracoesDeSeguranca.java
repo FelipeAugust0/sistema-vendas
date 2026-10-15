@@ -23,7 +23,6 @@ public class ConfiguracoesDeSeguranca {
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .usernameParameter("email")
                         .defaultSuccessUrl("/pedidos", true)
                         .failureUrl("/login?erro")
                         .permitAll())

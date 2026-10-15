@@ -3,7 +3,6 @@ package br.com.aweb.sistema_vendas.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.aweb.sistema_vendas.model.Produto;
@@ -13,8 +12,11 @@ import jakarta.transaction.Transactional;
 @Service
 public class ProdutoService {
 
-    @Autowired
-    ProdutoRepository produtoRepository;
+    private final ProdutoRepository produtoRepository;
+
+    public ProdutoService(ProdutoRepository produtoRepository) {
+        this.produtoRepository = produtoRepository;
+    }
 
     // CREATE
     @Transactional

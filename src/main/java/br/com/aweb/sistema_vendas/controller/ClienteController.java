@@ -4,6 +4,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.com.aweb.sistema_vendas.model.Cliente;
 import br.com.aweb.sistema_vendas.service.ClienteService;
@@ -49,6 +53,10 @@ public class ClienteController {
             BindingResult result,
             Model model) {
 
+        if (cliente.getId() != null) {
+            buscarCliente(cliente.getId());
+        }
+
         if (result.hasErrors()) {
             return "cliente/form";
         }
@@ -75,7 +83,7 @@ public class ClienteController {
             @PathVariable Long id,
             Model model) {
 
-        Cliente cliente = clienteService.buscarPorId(id);
+        Cliente cliente = buscarCliente(id);
 
         model.addAttribute(
                 "cliente",
@@ -90,7 +98,7 @@ public class ClienteController {
             @PathVariable Long id,
             Model model) {
 
-        Cliente cliente = clienteService.buscarPorId(id);
+        Cliente cliente = buscarCliente(id);
 
         model.addAttribute(
                 "cliente",
@@ -102,10 +110,29 @@ public class ClienteController {
     // EXCLUIR
     @PostMapping("/{id}/excluir")
     public String excluir(
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
 
-        clienteService.excluir(id);
+        try {
+            clienteService.excluir(id);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Cliente não encontrado");
+        } catch (DataIntegrityViolationException e) {
+            redirectAttributes.addFlashAttribute(
+                    "erro",
+                    "Não é possível excluir este cliente porque ele possui pedidos.");
+        }
 
         return "redirect:/clientes";
+    }
+
+    private Cliente buscarCliente(Long id) {
+        try {
+            return clienteService.buscarPorId(id);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado");
+        }
     }
 }
